@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Informe Capítulo 5 — Navegación</title>
+<style>
+@page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+* { box-sizing: border-box; }
+body {
+  font-family: "DejaVu Sans", Arial, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.45;
+  color: #222;
+  max-width: 100%;
+}
+h1 {
+  font-size: 21pt;
+  line-height: 1.2;
+  margin: 0 0 6pt 0;
+  color: #111;
+  border-bottom: 2px solid #333;
+  padding-bottom: 6pt;
+}
+h2 {
+  font-size: 15pt;
+  margin: 18pt 0 6pt 0;
+  color: #111;
+  border-bottom: 1px solid #bbb;
+  padding-bottom: 3pt;
+  page-break-after: avoid;
+}
+h3 {
+  font-size: 12pt;
+  margin: 14pt 0 4pt 0;
+  color: #222;
+  page-break-after: avoid;
+}
+h4 { font-size: 11pt; margin: 10pt 0 3pt 0; }
+p { margin: 5pt 0; text-align: justify; }
+ul, ol { margin: 4pt 0 6pt 18pt; padding: 0; }
+li { margin: 2pt 0; }
+code {
+  font-family: "DejaVu Sans Mono", monospace;
+  font-size: 9pt;
+  background: #f2f2f2;
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+pre {
+  background: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 7pt 9pt;
+  font-size: 8.4pt;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  word-break: break-word;
+  page-break-inside: avoid;
+}
+pre code { background: none; padding: 0; font-size: 8.4pt; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8pt 0;
+  font-size: 9pt;
+  page-break-inside: avoid;
+}
+th, td {
+  border: 1px solid #aaa;
+  padding: 4pt 5pt;
+  vertical-align: top;
+  text-align: left;
+}
+th { background: #eee; font-weight: bold; }
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 8pt auto 4pt auto;
+  page-break-inside: avoid;
+}
+blockquote {
+  border-left: 3px solid #999;
+  margin: 6pt 0;
+  padding-left: 10pt;
+  color: #555;
+}
+hr { border: none; border-top: 1px solid #ccc; margin: 12pt 0; }
+strong { color: #111; }
+</style>
+</head>
+<body>
+<h1>Informe de laboratorio — Capítulo 5: Navegación de robots móviles</h1>
+<p><strong>Curso:</strong> Robótica — Universidad Nacional de Colombia, sede Manizales<br />
+<strong>Semestre:</strong> VIII — 2026-2<br />
+<strong>Guía:</strong> <em>Guía de laboratorio de simulación, Capítulo 5 — Corke</em><br />
+<strong>Actividades desarrolladas:</strong> A, B, C y D (simulación en Python)<br />
+<strong>Integrantes:</strong> [completar]<br />
+<strong>Fecha:</strong> 20 de octubre de 2026</p>
+<hr />
+<h2>1. Resumen</h2>
+<p>Se implementaron y ejecutaron las cuatro actividades de simulación de la guía del Capítulo 5: el vehículo Braitenberg (parte A), el Bug2 simplificado (parte B), la planificación con A* (parte C) y el <em>distance transform</em> iterativo sobre un mapa de ocupación (parte D). Todas las simulaciones usan el mismo mapa de 20×20 celdas de la guía, con un obstáculo rectangular, y la misma convención de coordenadas. Se respondieron las doce preguntas de análisis con base en los resultados obtenidos y en el texto de Corke.</p>
+<p>Los resultados principales son: el vehículo Braitenberg de la guía <strong>no converge</strong> al objetivo (distancia mínima ≈ 9.57 celdas y distancia final ≈ 131.62 celdas para T = 500); el Bug2 simplificado llega en <strong>32 pasos</strong>, que en este mapa coincide con la cota inferior de Manhattan y por tanto es óptimo, aunque el algoritmo no garantiza optimalidad en general; A* encuentra un camino de <strong>32 pasos</strong> expandiendo <strong>305 nodos</strong>; y el <em>distance transform</em> obtiene <strong>32 pasos</strong> con <code>dist[inicio] = 32</code>, estabilizándose en <strong>5 barridos</strong> aunque el código ejecuta 100.</p>
+<hr />
+<h2>2. Objetivos y alcance</h2>
+<h3>2.1 Objetivos de la guía y su cumplimiento</h3>
+<table>
+<thead>
+<tr>
+  <th>Objetivo de la guía</th>
+  <th>Dónde se cumple</th>
+  <th>Evidencia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Implementar estrategias de navegación reactiva</td>
+  <td>Parte A (Braitenberg) y parte B (Bug2)</td>
+  <td>Figuras A1, A2 y B1; respuestas A1–A3 y B1–B3</td>
+</tr>
+<tr>
+  <td>Analizar algoritmos de evasión de obstáculos (Bug2)</td>
+  <td>Parte B</td>
+  <td>Figura B1, prueba con inicio/objetivo invertidos y respuestas B1–B3</td>
+</tr>
+<tr>
+  <td>Implementar planificación de trayectorias con A*</td>
+  <td>Parte C</td>
+  <td>Figura C1 y respuestas C1–C3</td>
+</tr>
+<tr>
+  <td>Aplicar planificación en mapas de ocupación</td>
+  <td>Parte D</td>
+  <td>Figura D1 y respuestas D1–D3</td>
+</tr>
+<tr>
+  <td>Integrar navegación autónoma en ROS2 (Nav2)</td>
+  <td><strong>No incluida en esta entrega</strong></td>
+  <td>La instrucción del profesor para esta sesión cubre las partes A–D</td>
+</tr>
+</tbody>
+</table>
+<h3>2.2 Alcance</h3>
+<p>Esta entrega cubre <strong>las partes A, B, C y D</strong> de la guía, que corresponden a los cuatro primeros objetivos. La parte E (ROS2/Nav2) no forma parte de la instrucción de esta sesión: requiere el stack de ROS2, <code>nav2_bringup</code> y un robot simulado, y se deja para una entrega posterior. Por eso todas las simulaciones de este informe son locales, con <code>numpy</code> y <code>matplotlib</code>, y no dependen de ROS2.</p>
+<h3>2.3 Estructura del laboratorio</h3>
+<pre><code>Laboratorio/
+├── README.md
+├── requirements.txt
+├── navegacion/
+│   ├── mapas.py                 # mapa 20×20, convención grid[y,x], dibujo
+│   ├── metricas.py              # longitud, distancias, CSV
+│   ├── a_braitenberg.py         # parte A
+│   ├── b_bug2.py                # parte B
+│   ├── c_astar.py               # parte C
+│   └── d_distance_transform.py  # parte D
+├── experimentos/
+│   ├── run_a.py … run_d.py      # un script por parte
+│   └── run_all.py               # reproduce figuras + metricas.csv
+├── figuras/                     # PNG 300 dpi + SVG
+└── resultados/                  # metricas.csv
+</code></pre>
+<p>El código completo y ejecutable está en <code>Laboratorio/</code>. En este informe se incluyen las funciones centrales de cada parte y se referencian las figuras y los resultados numéricos.</p>
+<hr />
+<h2>3. Metodología y convenciones</h2>
+<ul>
+<li><strong>Mapa:</strong> <code>grid</code> de 20×20 celdas, con <code>grid[8:12, 5:15] = 1</code> (obstáculo rectangular de 4×10 celdas). Las celdas libres valen 0 y las ocupadas 1.</li>
+<li><strong>Coordenadas:</strong> una celda se escribe como <code>(x, y)</code> y se indexa como <code>grid[y, x]</code>. En las figuras se usa <code>origin=&quot;lower&quot;</code>, de modo que el eje y crece hacia arriba.</li>
+<li><strong>Conectividad:</strong> las partes B, C y D usan 4 vecinos (arriba, abajo, izquierda, derecha) y costo unitario por arista. No se usan diagonales.</li>
+<li><strong>Inicio y objetivo:</strong> las partes B y C usan <code>start = (2, 2)</code> y <code>goal = (18, 18)</code>. La parte D usa el problema invertido de la guía: <code>goal = (2, 2)</code> y <code>start = (18, 18)</code>. Para comparar D con B se ejecutó también D con <code>(2, 2) → (18, 18)</code>.</li>
+<li><strong>Distancias:</strong> se reportan en celdas. La distancia de Manhattan entre <code>(2,2)</code> y <code>(18,18)</code> es <code>|18−2| + |18−2| = 32</code>; es la cota inferior para cualquier camino de 4 vecinos.</li>
+<li><strong>Reproducibilidad:</strong> todas las figuras y la tabla <code>resultados/metricas.csv</code> se generan con <code>python experimentos/run_all.py</code> desde <code>Laboratorio/</code>. Los tiempos son mediciones locales e indicativas.</li>
+</ul>
+<h3>3.1 Ajustes mínimos respecto al código de la guía</h3>
+<p>Se conservó la lógica de la guía. Los cambios fueron de instrumentación y robustez, no de algoritmo:</p>
+<ol>
+<li>Se eliminaron los <code>print</code> dentro de los bucles (la guía imprime cada iteración).</li>
+<li>En <code>is_free</code> se añadió la comprobación de límites del mapa, para que el seguidor de borde no consulte índices fuera de la matriz.</li>
+<li>En A* se añadió un contador de nodos extraídos/encolados y la lista de nodos expandidos; también se corrigió la comparación de <code>x</code> con el ancho (<code>shape[1]</code>) y de <code>y</code> con el alto (<code>shape[0]</code>); la guía usa <code>shape[0]</code> para <code>x</code> y <code>shape[1]</code> para <code>y</code>, lo que solo funciona en mapas cuadrados.</li>
+<li>En el <em>distance transform</em> se registra el barrido en que el mapa se estabiliza, pero se siguen ejecutando los 100 barridos de la guía.</li>
+<li>Se cambió el backend de Matplotlib a <code>Agg</code> para guardar figuras sin ventana.</li>
+</ol>
+<p><strong>Importante:</strong> la ley de control de la parte A es la de la guía, <code>v = −Kv·(sL + sR)</code>, no la del libro, <code>v = 2 − sR − sL</code>. Esa diferencia es el objeto de análisis de A2 y A3. Del mismo modo, el Bug2 de la parte B es la versión simplificada de la guía, sin m-line ni condición de salida; el informe discute esa limitación.</p>
+<hr />
+<h2>4. Parte A — Navegación reactiva con un vehículo Braitenberg</h2>
+<h3>4.1 Objetivo</h3>
+<p>Implementar un robot que se dirija hacia un objetivo usando únicamente dos sensores laterales y una ley de control directa, sin mapa ni planificación.</p>
+<h3>4.2 Implementación</h3>
+<p>El campo escalar tiene su máximo en <code>(60, 90)</code>:</p>
+<pre><code>s(x, y) = 1000 / ((x − 60)² + (y − 90)² + 50)
+</code></pre>
+<p>Los dos sensores están separados lateralmente una distancia <code>d = 2</code> respecto al eje del robot. La ley de control de la guía es:</p>
+<pre><code>v     = −Kv · (sL + sR)
+ω     =  Ks · (sR − sL)
+</code></pre>
+<p>con <code>Ks = 17</code>, <code>Kv = 14</code>, <code>dt = 0.1</code>, estado inicial <code>(10, 10, 0°)</code> y <code>T = 222</code> iteraciones. La cinemática es la del robot diferencial simplificado:</p>
+<pre><code>x     ← x + v·cos(θ)·dt
+y     ← y + v·sin(θ)·dt
+θ     ← θ + ω·dt
+</code></pre>
+<p>Código central (el completo está en <code>navegacion/a_braitenberg.py</code>):</p>
+<pre><code class="language-python">def sensorfield(x, y):
+    xc, yc = (60.0, 90.0)
+    return 1000.0 / ((x - xc) ** 2 + (y - yc) ** 2 + 50.0)
+
+d = 2.0
+for i in range(T):
+    sL = sensorfield(x - d * np.sin(theta), y + d * np.cos(theta))
+    sR = sensorfield(x + d * np.sin(theta), y - d * np.cos(theta))
+
+    v = -Kv * (sL + sR)
+    omega = Ks * (sR - sL)
+
+    x += v * np.cos(theta) * dt
+    y += v * np.sin(theta) * dt
+    theta += omega * dt
+</code></pre>
+<h3>4.3 Resultados</h3>
+<p><img src="../Laboratorio/figuras/A1_braitenberg_trayectoria.png" alt="Figura A1. Campo escalar y trayectoria del vehículo Braitenberg para T = 222." /></p>
+<p><strong>Figura A1.</strong> El color representa el campo <code>s(x, y)</code> y la línea blanca la trayectoria. El robot parte de <code>(10, 10)</code>, se desplaza inicialmente hacia la izquierda (alejándose en x del objetivo), describe un amplio arco y termina en <code>(51.36, 85.82)</code>, a 9.60 celdas del objetivo.</p>
+<p><img src="../Laboratorio/figuras/A2_braitenberg_distancia.png" alt="Figura A2. Distancia al objetivo sobre la trayectoria completa (T = 2000)." /></p>
+<p><strong>Figura A2.</strong> La distancia al objetivo a lo largo de la trayectoria completa. Los puntos marcan el corte de cada <code>T</code> sobre la misma curva: con <code>T = 222</code> el robot queda a 9.60 celdas; con <code>T = 500</code> la distancia final es 131.62; con <code>T = 1000</code>, 165.92; y con <code>T = 2000</code>, 117.95. El mínimo global es 1.64 en la iteración 1819, pero el robot no se detiene y vuelve a alejarse.</p>
+<table>
+<thead>
+<tr>
+  <th style="text-align:right">T</th>
+  <th style="text-align:right">Distancia mínima (celdas)</th>
+  <th style="text-align:right">Iteración del mínimo</th>
+  <th style="text-align:right">Distancia final (celdas)</th>
+  <th style="text-align:right">Posición final (x, y)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:right">222</td>
+  <td style="text-align:right">9.596</td>
+  <td style="text-align:right">222</td>
+  <td style="text-align:right">9.596</td>
+  <td style="text-align:right">(51.36, 85.82)</td>
+</tr>
+<tr>
+  <td style="text-align:right">500</td>
+  <td style="text-align:right">9.570</td>
+  <td style="text-align:right">223</td>
+  <td style="text-align:right">131.620</td>
+  <td style="text-align:right">(171.48, 159.97)</td>
+</tr>
+<tr>
+  <td style="text-align:right">1000</td>
+  <td style="text-align:right">9.570</td>
+  <td style="text-align:right">223</td>
+  <td style="text-align:right">165.918</td>
+  <td style="text-align:right">(169.71, 214.47)</td>
+</tr>
+<tr>
+  <td style="text-align:right">2000</td>
+  <td style="text-align:right">1.642</td>
+  <td style="text-align:right">1819</td>
+  <td style="text-align:right">117.951</td>
+  <td style="text-align:right">(25.35, −22.75)</td>
+</tr>
+</tbody>
+</table>
+<h3>4.4 Respuestas a las preguntas de la Parte A</h3>
+<h4>A1. ¿Cómo influye la diferencia entre sensores en la dirección del robot?</h4>
+<p>La diferencia <code>sR − sL</code> es la estimación discreta de la componente lateral del gradiente del campo. La ley <code>ω = Ks·(sR − sL)</code> hace que el robot gire hacia el sensor que mide más campo:</p>
+<ul>
+<li>Si <code>sR &gt; sL</code>, entonces <code>ω &gt; 0</code> y el robot gira en sentido antihorario (hacia la izquierda).</li>
+<li>Si <code>sL &gt; sR</code>, entonces <code>ω &lt; 0</code> y el robot gira en sentido horario (hacia la derecha).</li>
+<li>Si <code>sL = sR</code>, el robot va recto.</li>
+</ul>
+<p>La magnitud de <code>ω</code> es proporcional a la diferencia y a <code>Ks</code>. En la corrida de la guía, al inicio <code>sL ≈ 0.116</code> y <code>sR ≈ 0.108</code>, porque el sensor izquierdo está más cerca del objetivo en <code>y</code>; por eso <code>ω ≈ −0.14 rad/s</code> y el robot gira lentamente en sentido horario. La diferencia es pequeña mientras el robot está lejos, así que el giro es suave; cerca del objetivo la diferencia también se hace pequeña y el robot deja de corregir el rumbo. La Figura A1 muestra el resultado: el robot no apunta directamente al objetivo, sino que describe un arco.</p>
+<h4>A2. ¿Qué ocurre cuando el robot se aproxima al objetivo?</h4>
+<p>Ocurren dos cosas opuestas. Por un lado, el campo crece como <code>1/r²</code> y la <strong>velocidad lineal crece en magnitud</strong>: <code>v = −Kv·(sL + sR)</code> no tiene saturación ni término de frenado. Por otro, la diferencia entre sensores se reduce porque ambos sensores ven casi el mismo campo, de modo que <code>ω → 0</code> y el robot deja de girar.</p>
+<p>El resultado es un <strong>sobrepaso</strong>: el robot llega cerca del objetivo con una velocidad grande y no tiene forma de detenerse. En la corrida de 222 pasos, la distancia mínima es 9.60 celdas; al continuar un paso más, la posición salta de <code>(51.36, 85.82)</code> a <code>(68.62, 94.17)</code>, un desplazamiento de ≈19.2 celdas en un solo paso, porque <code>|v| ≈ 191.7</code> y <code>dt = 0.1</code>. La distancia al objetivo en ese paso es 9.57: el robot pasó al otro lado, no por el objetivo. Después el campo vuelve a ser pequeño, la velocidad baja y el robot se aleja.</p>
+<p>La ley del libro es distinta: en su modelo, <code>v = 2 − sR − sL</code> tiende a cero cuando <code>sR = sL = 1</code> en el objetivo, de modo que el robot frena y converge asintóticamente. La ley de la guía, con signo negativo y sin frenado, no tiene ese comportamiento. Esa es la explicación de por qué la distancia de la Figura A2 no baja a cero.</p>
+<h4>A3. ¿Qué limitaciones presenta este enfoque? ¿Qué pasa si se aumenta la cantidad de iteraciones?</h4>
+<p>Las limitaciones principales son:</p>
+<ol>
+<li><strong>No hay condición de parada.</strong> El robot nunca “sabe” que llegó; sigue moviéndose mientras el campo sea distinto de cero.</li>
+<li><strong>No hay saturación de velocidad.</strong> Cerca del objetivo, <code>|v|</code> crece y el paso de integración se vuelve muy grande; el robot sobrepasa el objetivo.</li>
+<li><strong>No evita obstáculos.</strong> El campo es global y conocido; un obstáculo físico bloquearía al robot, como señala Corke. No hay sensores de proximidad ni comportamiento de evasión.</li>
+<li><strong>No tiene mapa ni memoria.</strong> Es puramente reactivo; no puede planificar ni recordar por dónde pasó.</li>
+<li><strong>Es sensible a los parámetros y al paso <code>dt</code>.</strong> Cambiar <code>Ks</code>, <code>Kv</code> o <code>dt</code> cambia la trayectoria; un <code>dt</code> grande puede hacer que el robot salte sobre el objetivo.</li>
+<li><strong>Puede quedar atrapado en máximos locales</strong> si el campo tiene varias fuentes o valles.</li>
+</ol>
+<p>Al aumentar las iteraciones <strong>no se converge</strong>: con <code>T = 500</code> la distancia final es 131.62; con <code>T = 1000</code>, 165.92; con <code>T = 2000</code>, 117.95. La trayectoria es una órbita que se aleja y vuelve a pasar cerca del objetivo por casualidad (mínimo 1.64 en la iteración 1819), pero no se detiene. Aumentar <code>T</code> solo alarga la órbita; no corrige la ley de control. Para que converja habría que cambiar la ley (por ejemplo, la del libro, <code>v = 2 − sR − sL</code>) o añadir una condición de parada y una saturación de velocidad.</p>
+<hr />
+<h2>5. Parte B — Navegación con Bug2</h2>
+<h3>5.1 Objetivo</h3>
+<p>Implementar un algoritmo de navegación con evasión de obstáculos sin mapa global: avanzar hacia el objetivo y, cuando se detecte un obstáculo, seguirlo por el borde hasta poder retomar el avance.</p>
+<h3>5.2 Implementación</h3>
+<p>El código de la guía es un Bug2 simplificado. En cada iteración:</p>
+<ol>
+<li>Calcula la dirección al objetivo.</li>
+<li>Avanza por el eje de mayor diferencia (sin diagonales).</li>
+<li>Si la celda siguiente está ocupada, prueba los vecinos en el orden derecha, arriba, izquierda, abajo y se mueve al primero libre.</li>
+<li>Registra la posición y termina si está a menos de 1 celda del objetivo.</li>
+</ol>
+<p>No se calcula la m-line ni la condición de salida del Bug2 completo; esa es una diferencia importante que se discute en B2.</p>
+<p>Código central (el completo está en <code>navegacion/b_bug2.py</code>):</p>
+<pre><code class="language-python">def bug2(grid, start, goal, max_iter=500):
+    pos = np.array(start, dtype=int)
+    goal_arr = np.array(goal, dtype=int)
+    path = [pos.copy()]
+    exito = False
+
+    for iteraciones in range(1, max_iter + 1):
+        direction = goal_arr - pos
+
+        if abs(direction[0]) &gt; abs(direction[1]):
+            step = np.array([int(np.sign(direction[0])), 0], dtype=int)
+        else:
+            step = np.array([0, int(np.sign(direction[1]))], dtype=int)
+
+        next_pos = pos + step
+
+        if is_free(grid, next_pos):
+            pos = next_pos
+        else:
+            for move in (np.array([1, 0]), np.array([0, 1]),
+                         np.array([-1, 0]), np.array([0, -1])):
+                if is_free(grid, pos + move):
+                    pos = pos + move
+                    break
+
+        path.append(pos.copy())
+        if np.linalg.norm(pos - goal_arr) &lt; 1:
+            exito = True
+            break
+
+    return np.asarray(path), exito, iteraciones
+</code></pre>
+<h3>5.3 Resultados</h3>
+<p><img src="../Laboratorio/figuras/B1_bug2.png" alt="Figura B1. Camino del Bug2 simplificado en el mapa de 20×20." /></p>
+<p><strong>Figura B1.</strong> El obstáculo es la región gris; la línea negra discontinua es la m-line (la recta ideal entre inicio y objetivo), que atraviesa el obstáculo. El camino verde lo rodea por abajo y por la derecha, y llega al objetivo en 32 pasos. La m-line se dibuja solo como referencia: el código de la guía no la usa.</p>
+<table>
+<thead>
+<tr>
+  <th>Métrica</th>
+  <th style="text-align:right">Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Longitud del camino</td>
+  <td style="text-align:right">32 pasos</td>
+</tr>
+<tr>
+  <td>Longitud euclidiana</td>
+  <td style="text-align:right">32.0 celdas</td>
+</tr>
+<tr>
+  <td>¿Llegó al objetivo?</td>
+  <td style="text-align:right">Sí</td>
+</tr>
+<tr>
+  <td>Iteraciones</td>
+  <td style="text-align:right">32</td>
+</tr>
+<tr>
+  <td>Cota inferior de Manhattan</td>
+  <td style="text-align:right">32</td>
+</tr>
+<tr>
+  <td>Prueba con inicio/objetivo invertidos</td>
+  <td style="text-align:right">No llega; 500 iteraciones; 13 celdas únicas; ciclo entre (12,12) y (13,12)</td>
+</tr>
+</tbody>
+</table>
+<h3>5.4 Respuestas a las preguntas de la Parte B</h3>
+<h4>B1. ¿El camino obtenido es óptimo? Justifique.</h4>
+<p><strong>En este mapa, sí.</strong> Cualquier camino de 4 vecinos desde <code>(2,2)</code> hasta <code>(18,18)</code> necesita al menos <code>|18−2| + |18−2| = 32</code> pasos, porque cada paso cambia una sola coordenada en una unidad. El camino de la Figura B1 tiene exactamente 32 pasos, así que alcanza la cota inferior y es óptimo. El obstáculo no obliga a un rodeo adicional: el camino pasa por <code>y = 7</code>, justo debajo del obstáculo, y sube por <code>x = 15</code>, justo a la derecha, sin salirse de la escalera monótona.</p>
+<p><strong>Pero el algoritmo no garantiza optimalidad en general.</strong> Bug2 es un algoritmo local: sigue el borde del obstáculo y no tiene una visión global del mapa. En el ejemplo de la casa del libro, el Bug2 completo recorre 1307 puntos, mientras que el <em>distance transform</em> encuentra un camino de 338 pasos, casi cuatro veces más corto. La optimalidad de este mapa es una coincidencia favorable de la geometría, no una propiedad del algoritmo. Además, la versión de la guía es más débil que el Bug2 completo: no usa la m-line ni la condición de salida, como se ve en B2.</p>
+<h4>B2. ¿Qué sucede en entornos complejos?</h4>
+<p>El Bug2 simplificado puede tomar caminos muy largos, oscilar o quedar en un ciclo. La razón es que el seguimiento de borde es una regla fija (probar derecha, arriba, izquierda, abajo) y no verifica si el robot está avanzando hacia el objetivo. En obstáculos cóncavos, el robot puede repetir un par de celdas indefinidamente.</p>
+<p>Una prueba con el mismo código y el mismo mapa, pero intercambiando inicio y objetivo (<code>(18,18) → (2,2)</code>), lo muestra: el robot pasa por 13 celdas distintas, llega a <code>(12,12)</code> y queda ciclando entre <code>(12,12)</code> y <code>(13,12)</code> durante las 500 iteraciones, sin llegar. En <code>(12,12)</code>, la diferencia en x y en y con el objetivo es la misma (<code>−10, −10</code>), así que el código intenta bajar a <code>(12,11)</code>, que es obstáculo; el fallback prueba la derecha, <code>(13,12)</code>, que está libre. Desde <code>(13,12)</code> el paso dominante es a la izquierda, de vuelta a <code>(12,12)</code>, y allí vuelve a intentar bajar: el ciclo se repite. Es consecuencia directa de la regla de desempate y de no tener una condición de salida.</p>
+<p>El Bug2 completo del libro evita ese problema porque, al encontrar un obstáculo, sigue el borde hasta volver a la m-line en un punto <strong>más cercano al objetivo</strong> que el punto donde la dejó. Esa condición le permite abandonar el borde y retomar el avance. Aun así, el Bug2 completo sigue siendo subóptimo: en la casa recorre 1307 pasos frente a 338 del <em>distance transform</em>. La limitación de fondo es la falta de mapa global: sin “la foto completa”, el robot toma decisiones localmente correctas pero globalmente largas.</p>
+<h4>B3. Compare con el enfoque reactivo de la Parte A.</h4>
+<table>
+<thead>
+<tr>
+  <th>Aspecto</th>
+  <th>A — Braitenberg</th>
+  <th>B — Bug2 simplificado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>¿Usa mapa global?</td>
+  <td>No</td>
+  <td>No</td>
+</tr>
+<tr>
+  <td>¿Tiene memoria/estado?</td>
+  <td>No</td>
+  <td>Sí: registra el camino y detecta obstáculos</td>
+</tr>
+<tr>
+  <td>¿Detecta obstáculos?</td>
+  <td>No</td>
+  <td>Sí: consulta las celdas vecinas</td>
+</tr>
+<tr>
+  <td>¿Llega al objetivo?</td>
+  <td>No en la ley de la guía (mínimo 9.57)</td>
+  <td>Sí, en 32 pasos en este mapa</td>
+</tr>
+<tr>
+  <td>Trayectoria</td>
+  <td>Continua, suave, orbital</td>
+  <td>Discreta, en escalera</td>
+</tr>
+<tr>
+  <td>Optimalidad</td>
+  <td>No</td>
+  <td>En este mapa sí; en general no</td>
+</tr>
+<tr>
+  <td>Robustez en entornos complejos</td>
+  <td>Se bloquea con un obstáculo</td>
+  <td>Puede ciclar en la versión simplificada</td>
+</tr>
+</tbody>
+</table>
+<p>La diferencia conceptual es el <strong>estado</strong>: el Braitenberg conecta sensores y motores directamente, sin memoria; el Bug2 añade una máquina de estados (avanzar / seguir borde) y recuerda el camino. Esa memoria le permite resolver obstáculos que el Braitenberg no puede evitar, pero sigue siendo un método reactivo, sin planificación global. El Braitenberg es más suave y simple; el Bug2 es más robusto frente a obstáculos, a costa de un camino discreto y potencialmente largo.</p>
+<hr />
+<h2>6. Parte C — Planificación con A*</h2>
+<h3>6.1 Objetivo</h3>
+<p>Representar el entorno como un grafo (grid) e implementar A* para calcular una ruta óptima desde el inicio hasta el objetivo, usando una función heurística.</p>
+<h3>6.2 Implementación</h3>
+<p>El grid se representa con la misma matriz de 20×20. A* usa una cola de prioridad con <code>f(n) = g(n) + h(n)</code>, donde <code>g(n)</code> es el costo desde el inicio y <code>h(n)</code> es la distancia euclidiana al objetivo:</p>
+<pre><code>h(n) = ||n − goal||₂
+</code></pre>
+<p>La guía usa 4 vecinos y costo 1 por arista. El código mantiene un diccionario <code>cost</code> con el mejor costo conocido y un diccionario <code>came_from</code> para reconstruir el camino. No usa un conjunto cerrado; si encuentra un costo mejor, vuelve a encolar el nodo.</p>
+<p>Código central (el completo está en <code>navegacion/c_astar.py</code>):</p>
+<pre><code class="language-python">def heuristic(a, b):
+    return float(np.linalg.norm(np.asarray(a, float) - np.asarray(b, float)))
+
+def astar(grid, start, goal):
+    start, goal = tuple(start), tuple(goal)
+    open_list = []
+    heapq.heappush(open_list, (0.0, start))
+    came_from = {}
+    cost = {start: 0}
+    expandidos = []
+    encolados = 1
+
+    while open_list:
+        _, current = heapq.heappop(open_list)
+        expandidos.append(current)
+
+        if current == goal:
+            break
+
+        for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+            neighbor = (current[0] + dx, current[1] + dy)
+
+            if (0 &lt;= neighbor[0] &lt; grid.shape[1] and
+                0 &lt;= neighbor[1] &lt; grid.shape[0] and
+                grid[neighbor[1], neighbor[0]] == 0):
+
+                new_cost = cost[current] + 1
+
+                if neighbor not in cost or new_cost &lt; cost[neighbor]:
+                    cost[neighbor] = new_cost
+                    priority = new_cost + heuristic(neighbor, goal)
+                    heapq.heappush(open_list, (priority, neighbor))
+                    came_from[neighbor] = current
+                    encolados += 1
+
+    if goal != start and goal not in came_from:
+        return [], len(expandidos), encolados, expandidos, None
+
+    path = []
+    node = goal
+    while node != start:
+        path.append(node)
+        node = came_from[node]
+    path.append(start)
+    path.reverse()
+    return path, len(expandidos), encolados, expandidos, cost.get(goal)
+</code></pre>
+<h3>6.3 Resultados</h3>
+<p><img src="../Laboratorio/figuras/C1_astar.png" alt="Figura C1. Camino de A* y nodos expandidos." /></p>
+<p><strong>Figura C1.</strong> Los cuadros grises son los nodos extraídos de la cola (305 en total); la línea roja es el camino de 32 pasos. A* sube por <code>x = 4</code> hasta <code>y = 12</code>, cruza por encima del obstáculo y luego avanza en escalera hasta <code>(18,18)</code>. Es una ruta distinta de la de Bug2 (que pasa por debajo y sube por <code>x = 15</code>), pero también mide 32 pasos.</p>
+<table>
+<thead>
+<tr>
+  <th>Métrica</th>
+  <th style="text-align:right">Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Longitud del camino</td>
+  <td style="text-align:right">32 pasos</td>
+</tr>
+<tr>
+  <td>Costo <code>g(objetivo)</code></td>
+  <td style="text-align:right">32 aristas</td>
+</tr>
+<tr>
+  <td>Nodos extraídos de la cola</td>
+  <td style="text-align:right">305</td>
+</tr>
+<tr>
+  <td>Nodos únicos extraídos</td>
+  <td style="text-align:right">305</td>
+</tr>
+<tr>
+  <td>Nodos encolados</td>
+  <td style="text-align:right">347</td>
+</tr>
+<tr>
+  <td>¿Llegó al objetivo?</td>
+  <td style="text-align:right">Sí</td>
+</tr>
+<tr>
+  <td>Tiempo de cómputo (indicativo)</td>
+  <td style="text-align:right">≈ 1.2 ms</td>
+</tr>
+</tbody>
+</table>
+<h3>6.4 Respuestas a las preguntas de la Parte C</h3>
+<h4>C1. ¿Qué diferencia hay entre BFS, UCS y A*?</h4>
+<table>
+<thead>
+<tr>
+  <th>Algoritmo</th>
+  <th>Criterio de expansión</th>
+  <th>¿Qué garantiza?</th>
+  <th>Comentario</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>BFS</strong> (<em>breadth-first search</em>)</td>
+  <td>Cola FIFO: expande por número de aristas</td>
+  <td>Camino con el menor número de aristas, si todas cuestan lo mismo</td>
+  <td>No usa costos; en un grid con costo unitario coincide con UCS, pero explora muchos nodos</td>
+</tr>
+<tr>
+  <td><strong>UCS</strong> (<em>uniform-cost search</em>)</td>
+  <td>Cola de prioridad por <code>g(n)</code>, el costo desde el inicio</td>
+  <td>Camino de costo mínimo con costos no negativos</td>
+  <td>Explora en todas las direcciones, como una onda; no usa información del objetivo</td>
+</tr>
+<tr>
+  <td><strong>A*</strong></td>
+  <td>Cola de prioridad por <code>f(n) = g(n) + h(n)</code></td>
+  <td>Camino de costo mínimo si <code>h</code> es admisible</td>
+  <td>Usa la heurística para dirigir la búsqueda y expandir menos nodos</td>
+</tr>
+</tbody>
+</table>
+<p>Las relaciones son: BFS es UCS cuando todas las aristas cuestan 1; UCS es A* cuando <code>h(n) = 0</code>. A* es el más informado de los tres, pero su optimalidad depende de la heurística. En el ejemplo de grafos del libro, UCS explora 19 vértices y A* explora 12 para el mismo camino óptimo de 1659; la diferencia es el efecto de <code>h</code>.</p>
+<h4>C2. ¿Cuál es el papel de la heurística?</h4>
+<p>La heurística <code>h(n)</code> es una <strong>estimación del costo que falta</strong> desde <code>n</code> hasta el objetivo. Su papel es sesgar la búsqueda hacia las zonas prometedoras: si <code>h</code> es informativa, A* expande menos nodos que UCS y encuentra el mismo camino óptimo.</p>
+<p>Para que A* garantice optimalidad, <code>h</code> debe ser <strong>admisible</strong>: <code>h(n) ≤ h*(n)</code>, donde <code>h*(n)</code> es el costo real mínimo de <code>n</code> al objetivo. La distancia euclidiana es admisible en un grid de 4 vecinos con costo unitario porque la distancia en línea recta es una cota inferior de cualquier camino (que solo puede moverse en horizontal y vertical). También es <strong>consistente</strong>: <code>h(n) ≤ c(n,n') + h(n')</code>, pues un paso cambia la posición en una unidad y la distancia euclidiana cambia como máximo en una unidad.</p>
+<p>En el código de la guía, <code>h</code> es euclidiana. El camino obtenido cuesta 32, que es la cota inferior de Manhattan; por tanto, en este mapa el resultado es óptimo. Sin embargo, la heurística euclidiana es <strong>poco informativa</strong> en 4-conectividad: para un desplazamiento diagonal, la distancia euclidiana es menor que la Manhattan, y muchos nodos tienen valores de <code>f</code> parecidos. Por eso A* expande 305 de las 360 celdas libres (≈85 %). Una heurística Manhattan, más ajustada a la métrica de 4 vecinos, seguiría siendo admisible y reduciría las expansiones. La heurística <code>h = 0</code> también es admisible, pero convierte A* en UCS y explora aún más.</p>
+<h4>C3. ¿Qué ocurre si la heurística no es adecuada?</h4>
+<p>Depende del tipo de inadequación:</p>
+<ul>
+<li><strong>Si sobreestima (<code>h(n) &gt; h*(n)</code>, no admisible):</strong> A* puede descartar un camino mejor y devolver un camino <strong>subóptimo</strong>. La garantía de optimalidad se pierde, porque el objetivo puede extraerse de la cola antes de que se explore una ruta más barata.</li>
+<li><strong>Si subestima mucho (por ejemplo, <code>h = 0</code>):</strong> A* sigue siendo óptimo, pero se degrada a UCS y expande muchos más nodos. La búsqueda se vuelve más lenta.</li>
+<li><strong>Si es inconsistente:</strong> puede violar <code>h(n) ≤ c(n,n') + h(n')</code>; con un conjunto cerrado que no reabre nodos, un nodo podría quedar cerrado con un costo que luego mejora. El código de la guía no usa conjunto cerrado, así que puede reencolar y corregir, pero el primer objetivo extraído solo está garantizado si <code>h</code> es admisible.</li>
+<li><strong>Si es exactamente <code>h*(n)</code>:</strong> A* expande solo los nodos del camino óptimo; es el caso ideal, pero requiere conocer el costo real, que es justamente lo que se quiere calcular.</li>
+</ul>
+<p>En resumen: la heurística debe ser admisible para no perder optimalidad, y lo más ajustada posible (sin sobreestimar) para reducir el número de expansiones. La heurística euclidiana de la guía es admisible y correcta, pero no la más eficiente para este grid de 4 vecinos.</p>
+<hr />
+<h2>7. Parte D — Mapas de ocupación y distance transform</h2>
+<h3>7.1 Objetivo</h3>
+<p>Generar una trayectoria óptima sobre un mapa de ocupación usando un <em>distance transform</em>: calcular para cada celda libre la distancia al objetivo y obtener el camino bajando por ese mapa de distancias.</p>
+<h3>7.2 Implementación</h3>
+<p>El código de la guía usa 4 vecinos y costo unitario, así que calcula una <strong>distance transform Manhattan (L1)</strong>, no la euclidiana que usa el toolbox de Corke por defecto. La inicialización es:</p>
+<pre><code>dist[goal] = 0
+dist[otras celdas] = ∞
+</code></pre>
+<p>y la actualización iterativa es:</p>
+<pre><code>dist[y, x] = min(dist[y, x], 1 + min(dist[vecinos]))
+</code></pre>
+<p>para cada celda libre, barrierendo el mapa de izquierda a derecha y de abajo hacia arriba. Los obstáculos quedan en <code>∞</code>. Después, el camino se extrae desde <code>start</code> eligiendo repetidamente el vecino con menor <code>dist</code>, hasta llegar a <code>goal</code>.</p>
+<p>Código central (el completo está en <code>navegacion/d_distance_transform.py</code>):</p>
+<pre><code class="language-python">def distance_transform(grid, goal, n_iter=100):
+    alto, ancho = grid.shape
+    dist = np.full((alto, ancho), np.inf, dtype=float)
+    gx, gy = int(goal[0]), int(goal[1])
+    dist[gy, gx] = 0.0
+    barridos_estabilizacion = None
+
+    for it in range(n_iter):
+        cambio = False
+        for x in range(ancho):
+            for y in range(alto):
+                if grid[y, x] != 0:
+                    continue
+
+                mejor = dist[y, x]
+                for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+                    nx, ny = x + dx, y + dy
+                    if 0 &lt;= nx &lt; ancho and 0 &lt;= ny &lt; alto:
+                        candidato = dist[ny, nx] + 1.0
+                        if candidato &lt; mejor:
+                            mejor = candidato
+
+                if mejor &lt; dist[y, x]:
+                    dist[y, x] = mejor
+                    cambio = True
+
+        if not cambio and barridos_estabilizacion is None:
+            barridos_estabilizacion = it + 1
+
+    if barridos_estabilizacion is None:
+        barridos_estabilizacion = n_iter
+
+    return dist, barridos_estabilizacion
+
+
+def extraer_camino(dist, start, goal, max_iter=200):
+    pos = tuple(start)
+    goal = tuple(goal)
+    path = [pos]
+    alto, ancho = dist.shape
+
+    for _ in range(max_iter):
+        if pos == goal:
+            break
+
+        x, y = pos
+        mejor = None
+        for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+            nx, ny = x + dx, y + dy
+            if 0 &lt;= nx &lt; ancho and 0 &lt;= ny &lt; alto:
+                valor = dist[ny, nx]
+                if mejor is None or valor &lt; mejor[1]:
+                    mejor = ((nx, ny), valor)
+
+        if mejor is None or not np.isfinite(mejor[1]):
+            break
+
+        pos = mejor[0]
+        path.append(pos)
+
+    return np.asarray(path, dtype=int)
+</code></pre>
+<h3>7.3 Resultados</h3>
+<p><img src="../Laboratorio/figuras/D1_distance_transform.png" alt="Figura D1. Mapa de distancias y trayectoria óptima." /></p>
+<p><strong>Figura D1.</strong> El mapa de calor muestra la distancia Manhattan al objetivo <code>(2,2)</code>; los obstáculos se pintan en gris con cuadros negros. La trayectoria cian sale de <code>(18,18)</code>, recorre el borde superior hasta <code>(2,18)</code> y baja por el borde izquierdo hasta <code>(2,2)</code>. La distancia en el inicio es 32, igual que la longitud del camino.</p>
+<table>
+<thead>
+<tr>
+  <th>Métrica</th>
+  <th style="text-align:right">Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Longitud del camino</td>
+  <td style="text-align:right">32 pasos</td>
+</tr>
+<tr>
+  <td><code>dist[start]</code></td>
+  <td style="text-align:right">32 celdas</td>
+</tr>
+<tr>
+  <td>Barridos ejecutados</td>
+  <td style="text-align:right">100</td>
+</tr>
+<tr>
+  <td>Barrido de estabilización</td>
+  <td style="text-align:right">5 (4 con cambios + 1 de verificación)</td>
+</tr>
+<tr>
+  <td>Celdas libres</td>
+  <td style="text-align:right">360</td>
+</tr>
+<tr>
+  <td>Obstáculos</td>
+  <td style="text-align:right">40</td>
+</tr>
+<tr>
+  <td>Tiempo de cómputo (indicativo)</td>
+  <td style="text-align:right">≈ 31 ms</td>
+</tr>
+<tr>
+  <td>Comparación con Bug2, mismo problema <code>(2,2) → (18,18)</code></td>
+  <td style="text-align:right">DT 32 pasos; Bug2 32 pasos</td>
+</tr>
+</tbody>
+</table>
+<h3>7.4 Respuestas a las preguntas de la Parte D</h3>
+<h4>D1. ¿Por qué este método garantiza optimalidad?</h4>
+<p>El <em>distance transform</em> de la guía calcula, para la métrica Manhattan (4 vecinos, costo 1), la <strong>función de costo restante</strong> <code>D(c)</code> para cada celda libre <code>c</code>. En el punto fijo de la iteración se cumple la ecuación de Bellman:</p>
+<pre><code>D(meta) = 0
+D(c)    = 1 + min_{n ∈ N(c)} D(n)      para c ≠ meta
+</code></pre>
+<p>donde <code>N(c)</code> son los vecinos de <code>c</code>. La interpretación es directa: desde <code>c</code>, el mejor movimiento es ir al vecino con menor distancia y pagar 1. Si se sigue esa regla, cada paso reduce <code>D</code> exactamente en 1, así que se llega a la meta en <code>D(c)</code> pasos.</p>
+<p>Para ver que es óptimo, sea <code>L</code> la longitud de cualquier camino desde <code>c</code> hasta la meta. Por inducción en los pasos, <code>D(c) ≤ L</code>: en la meta <code>D = 0</code>; y si desde <code>c</code> se va a un vecino <code>n</code>, <code>D(c) = 1 + min_{n'} D(n') ≤ 1 + D(n) ≤ 1 + (L − 1) = L</code>. Además, el camino que baja por el vecino de menor <code>D</code> alcanza esa cota, porque cada paso reduce <code>D</code> en 1. Por tanto, <code>D(c)</code> es la longitud mínima y el camino extraído es óptimo.</p>
+<p>En el mapa de la guía, <code>D(start) = 32</code> y el camino tiene 32 pasos. La cota inferior de Manhattan también es 32, así que el resultado es óptimo por dos vías: la ecuación de Bellman y la cota geométrica.</p>
+<p>Una precisión importante: la optimalidad es una propiedad del <strong>punto fijo</strong> y de la <strong>métrica modelada</strong>. La guía titula esta sección “DISTANCE TRANSFORM (NO ÓPTIMO)”; esa etiqueta se explica por dos limitaciones de la implementación: (i) usa 4 vecinos y costo 1, así que optimiza la distancia Manhattan, no la euclidiana; (ii) ejecuta 100 barridos fijos y no verifica la convergencia. En el mapa 20×20 el punto fijo se alcanza en 5 barridos y el camino de 32 pasos es óptimo <strong>en la métrica Manhattan</strong>; para movimiento continuo con diagonales, la ruta no es la euclidiana más corta. La optimalidad de la ecuación de Bellman es válida para la métrica y el grafo que se modelan; el número fijo de barridos es una limitación aparte.</p>
+<h4>D2. ¿Cuál es su costo computacional?</h4>
+<p>Sea <code>N</code> el lado de un mapa cuadrado de <code>N×N</code> celdas (aquí <code>N = 20</code>).</p>
+<ul>
+<li><strong>Cada barrido</strong> recorre las <code>N²</code> celdas y, para cada celda libre, mira 4 vecinos: <code>O(N²)</code> operaciones.</li>
+<li><strong>El número de barridos</strong> depende de cuánto tarde la información en propagarse desde la meta hasta la celda más lejana. En un mapa abierto es del orden de <code>N</code>; en un laberinto puede ser del orden de <code>N²</code>. El libro señala que el número de iteraciones es <strong>al menos</strong> <code>O(N)</code>, lo que da un costo típico de <code>O(N³)</code>; en el peor caso (laberinto) se puede llegar a <code>O(N⁴)</code>.</li>
+<li><strong>La memoria</strong> es <code>O(N²)</code>, porque se guarda un valor de distancia por celda.</li>
+</ul>
+<p>Para el mapa de 20×20: 100 barridos × 400 celdas × 4 vecinos ≈ <code>1.6×10^5</code> actualizaciones, un costo trivial (≈31 ms en este equipo, incluyendo la extracción del camino). El mapa se estabiliza en 5 barridos, así que los otros 95 no cambian nada. Para la casa del libro (397×596), el método necesitó <strong>571 barridos</strong> y quedaron 9925 celdas inalcanzables; el límite fijo de 100 barridos de la guía no alcanzaría. Esa es la principal limitación de costo del código de la guía: el número de barridos debería adaptarse al tamaño y a la complejidad del mapa, o detectar la convergencia y detenerse.</p>
+<h4>D3. Compare con el algoritmo Bug2.</h4>
+<table>
+<thead>
+<tr>
+  <th>Criterio</th>
+  <th>Bug2 (simplificado de la guía)</th>
+  <th>Distance transform</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>¿Usa mapa global?</td>
+  <td>No: solo sensores locales</td>
+  <td>Sí: recorre todo el mapa</td>
+</tr>
+<tr>
+  <td>¿Cuándo calcula?</td>
+  <td>Online, mientras se mueve</td>
+  <td>Precomputa el mapa de distancias</td>
+</tr>
+<tr>
+  <td>Optimalidad</td>
+  <td>No garantizada; en este mapa dio 32 por la geometría</td>
+  <td>Sí, en la métrica Manhattan, al alcanzar el punto fijo</td>
+</tr>
+<tr>
+  <td>Resultado en el mapa 20×20</td>
+  <td>32 pasos</td>
+  <td>32 pasos</td>
+</tr>
+<tr>
+  <td>Resultado en la casa del libro</td>
+  <td>1307 pasos</td>
+  <td>338 pasos</td>
+</tr>
+<tr>
+  <td>Robustez</td>
+  <td>Puede ciclar en la versión simplificada; el Bug2 completo es completo pero subóptimo</td>
+  <td>Completo si el objetivo es alcanzable; no cicla</td>
+</tr>
+<tr>
+  <td>Costo</td>
+  <td>Barato por paso, pero puede dar rodeos largos</td>
+  <td>Costoso por adelantado (<code>O(N³)</code> típico), pero óptimo</td>
+</tr>
+</tbody>
+</table>
+<p>En el mapa de 20×20 ambos métodos dan 32 pasos, pero por razones distintas: Bug2 aprovecha que la escalera monótona puede rodear el obstáculo sin pasos extra; el <em>distance transform</em> calcula la distancia mínima para todas las celdas y luego baja por el gradiente. Los caminos son distintos (Bug2 pasa por debajo del obstáculo; el DT por el borde superior e izquierdo), pero ambos tienen la misma longitud óptima.</p>
+<p>La diferencia se vuelve clara en la casa: el DT encuentra 338 pasos y el Bug2 completo 1307, casi cuatro veces más. El precio es el cómputo global: el DT necesita el mapa completo y 571 barridos. Bug2 solo necesita sensores locales y avanza paso a paso, pero no tiene “la foto completa” y por eso se conforma con rutas localmente razonables. En la versión simplificada de la guía, además, el Bug2 puede quedar en un ciclo si el desempate lo lleva a un callejón; el DT no tiene ese problema porque el mapa de distancias es global.</p>
+<hr />
+<h2>8. Síntesis comparativa</h2>
+<table>
+<thead>
+<tr>
+  <th>Parte</th>
+  <th>Método</th>
+  <th>¿Mapa global?</th>
+  <th>¿Memoria?</th>
+  <th>Optimalidad</th>
+  <th>Resultado en el mapa 20×20</th>
+  <th>Limitación principal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>A</strong></td>
+  <td>Braitenberg</td>
+  <td>No</td>
+  <td>No</td>
+  <td>No</td>
+  <td><code>d_min = 9.57</code>; no llega; <code>d_final = 131.62</code> con T = 500</td>
+  <td>Sin frenado, sin obstáculos, sin parada</td>
+</tr>
+<tr>
+  <td><strong>B</strong></td>
+  <td>Bug2 simplificado</td>
+  <td>No</td>
+  <td>Sí (camino/estado)</td>
+  <td>En este mapa 32 = óptimo; no garantizada</td>
+  <td>32 pasos</td>
+  <td>Ciclos en el caso invertido; sin m-line</td>
+</tr>
+<tr>
+  <td><strong>C</strong></td>
+  <td>A*</td>
+  <td>Sí</td>
+  <td>Sí (cola y costos)</td>
+  <td>Sí, con <code>h</code> admisible</td>
+  <td>32 pasos; 305 expansiones</td>
+  <td>Requiere mapa y heurística</td>
+</tr>
+<tr>
+  <td><strong>D</strong></td>
+  <td>Distance transform</td>
+  <td>Sí</td>
+  <td>Sí (mapa de distancias)</td>
+  <td>Sí (Bellman, Manhattan)</td>
+  <td>32 pasos; <code>dist[start] = 32</code></td>
+  <td>Cómputo previo; 100 barridos fijos</td>
+</tr>
+</tbody>
+</table>
+<p>La progresión A → B → C → D muestra el compromiso central de la navegación:</p>
+<ul>
+<li><strong>A</strong> usa solo información instantánea de los sensores; es simple y suave, pero no tiene memoria, no evita obstáculos y no se detiene.</li>
+<li><strong>B</strong> añade estado y una regla de evasión; resuelve obstáculos, pero sigue siendo local y puede dar rodeos o ciclar.</li>
+<li><strong>C</strong> y <strong>D</strong> usan un mapa global; garantizan optimalidad, pero pagan con información y cómputo por adelantado. A* busca solo lo necesario; el DT calcula la solución para todas las celdas.</li>
+</ul>
+<hr />
+<h2>9. Conclusiones</h2>
+<ol>
+<li><p><strong>La ley de Braitenberg de la guía no converge.</strong> La combinación de velocidad negativa, ausencia de saturación y falta de condición de parada hace que el robot pase cerca del objetivo y se aleje. Con <code>T = 222</code> queda a 9.60 celdas; con <code>T = 500</code>, a 131.62; con <code>T = 2000</code>, a 117.95, aunque en la iteración 1819 pasa a 1.64. Aumentar las iteraciones no corrige el problema. La ley del libro, <code>v = 2 − sR − sL</code>, sí frena en el objetivo porque <code>v → 0</code> cuando <code>sR = sL = 1</code>.</p>
+</li>
+<li><p><strong>El Bug2 simplificado es óptimo en este mapa, pero no en general.</strong> El camino de 32 pasos alcanza la cota inferior de Manhattan y, por tanto, es óptimo en el mapa 20×20. Sin embargo, el algoritmo no tiene garantía de optimalidad y la versión de la guía puede ciclar: con inicio y objetivo invertidos, queda entre <code>(12,12)</code> y <code>(13,12)</code> durante 500 iteraciones. El Bug2 completo del libro evita el ciclo con la m-line, pero sigue siendo subóptimo (1307 pasos en la casa frente a 338 del DT).</p>
+</li>
+<li><p><em><em>A</em> y el distance transform coinciden en la longitud óptima, pero no en el camino.</em>* Ambos encuentran 32 pasos en el mapa 20×20. A* expande 305 nodos y devuelve una ruta por arriba del obstáculo; el DT calcula el mapa completo y devuelve una ruta por el borde superior e izquierdo. La diferencia es el tipo de cómputo: A* busca solo lo necesario; el DT precomputa la solución para todas las celdas.</p>
+</li>
+<li><p><strong>La heurística euclidiana es admisible pero poco informativa en 4-conectividad.</strong> A* expande el 85 % de las celdas libres. Una heurística Manhattan sería más ajustada a la métrica del grid y reduciría las expansiones, sin perder optimalidad. Si la heurística sobreestima, A* puede devolver un camino subóptimo; si es cero, se degrada a UCS.</p>
+</li>
+<li><p><strong>El límite fijo de 100 barridos del DT no escala.</strong> En el mapa 20×20 el mapa se estabiliza en 5 barridos, pero la casa del libro necesita 571. El código de la guía debería detectar la convergencia y detenerse, o adaptar el número de barridos al tamaño del mapa.</p>
+</li>
+<li><p><strong>La parte E (ROS2/Nav2) queda fuera de esta entrega.</strong> Las cuatro actividades A–D cubren los objetivos de navegación reactiva, Bug2, A* y mapas de ocupación. La integración en ROS2 requiere el stack de Nav2 y un robot simulado, y se deja para una entrega posterior.</p>
+</li>
+</ol>
+<hr />
+<h2>10. Referencias</h2>
+<ul>
+<li>Corke, P. (2023). <em>Robotics, Vision and Control: Fundamental Algorithms in Python</em> (3rd ed.). Springer. Capítulo 5: §5.1.1 (Braitenberg), §5.1.2 (Bug2), §5.3 (A*), §5.4.1 (distance transform).</li>
+<li>Guía de laboratorio de simulación, Capítulo 5 — Corke. Universidad Nacional de Colombia, sede Manizales, 2026.</li>
+<li>Corke, P. <em>RVC3-python</em>: notebook <code>notebooks/chap5.ipynb</code> y modelo <code>RVC3/models/braitenberg.py</code>.</li>
+<li>Resultados locales: <code>Laboratorio/resultados/metricas.csv</code>; figuras en <code>Laboratorio/figuras/</code>.</li>
+</ul>
+<hr />
+<h2>Anexo — Cómo reproducir</h2>
+<p>Desde <code>Laboratorio/</code>:</p>
+<pre><code class="language-bash"># Con el entorno del curso
+source ~/venvs/robotica/bin/activate
+
+# Todas las partes: figuras + resultados/metricas.csv
+python experimentos/run_all.py
+
+# Una parte concreta
+python experimentos/run_a.py
+python experimentos/run_b.py
+python experimentos/run_c.py
+python experimentos/run_d.py
+</code></pre>
+<p>Las figuras se guardan en <code>figuras/</code> como PNG de 300 dpi y SVG. La tabla completa de métricas queda en <code>resultados/metricas.csv</code>. El informe se puede convertir a PDF con <code>Informe/md_a_pdf.py</code> (usa Chrome en modo headless).</p>
+
+</body>
+</html>

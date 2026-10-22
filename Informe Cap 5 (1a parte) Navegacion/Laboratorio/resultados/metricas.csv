@@ -1,0 +1,45 @@
+parte,metrica,valor,unidad,nota
+A,distancia_minima,9.5962,celdas,T=222; mínimo en la iteración 222
+A,distancia_final,9.5962,celdas,T=222
+A,iteracion_minimo,222,iteraciones,T=222
+A,x_final,51.362,celdas,T=222
+A,y_final,85.8201,celdas,T=222
+A,distancia_minima,9.5704,celdas,T=500; mínimo en la iteración 223
+A,distancia_final,131.6197,celdas,T=500
+A,iteracion_minimo,223,iteraciones,T=500
+A,x_final,171.4808,celdas,T=500
+A,y_final,159.9698,celdas,T=500
+A,distancia_minima,9.5704,celdas,T=1000; mínimo en la iteración 223
+A,distancia_final,165.9184,celdas,T=1000
+A,iteracion_minimo,223,iteraciones,T=1000
+A,x_final,169.7143,celdas,T=1000
+A,y_final,214.4656,celdas,T=1000
+A,distancia_minima,1.642,celdas,T=2000; mínimo en la iteración 1819
+A,distancia_final,117.9507,celdas,T=2000
+A,iteracion_minimo,1819,iteraciones,T=2000
+A,x_final,25.3491,celdas,T=2000
+A,y_final,-22.7461,celdas,T=2000
+B,longitud_camino,32,pasos,"Bug2, (2,2) -> (18,18)"
+B,longitud_euclidiana,32.0,celdas,"Bug2, suma de distancias entre puntos"
+B,exito,1,booleano,1 = llegó al objetivo
+B,iteraciones,32,iteraciones,hasta llegar o agotar max_iter=500
+B,prueba_inversa_exito,0,booleano,"mismo mapa, (18,18) -> (2,2)"
+B,prueba_inversa_iteraciones,500,iteraciones,se agotan las 500 iteraciones
+B,prueba_inversa_celdas_unicas,13,celdas,ciclo entre dos celdas
+C,longitud_camino,32,pasos,"A*, (2,2) -> (18,18)"
+C,costo,32,aristas,costo g(objetivo)
+C,nodos_extraidos,305,nodos,"heappop, puede incluir duplicados"
+C,nodos_unicos,305,nodos,nodos distintos extraídos
+C,nodos_encolados,347,nodos,heappush total
+C,exito,1,booleano,1 = llegó al objetivo
+C,tiempo_s,0.001243,s,"medición local, indicativa"
+D,longitud_camino,32,pasos,"DT, (18,18) -> (2,2), como la guía"
+D,dist_inicio,32.0,celdas,dist[start] del mapa de distancias
+D,barridos_ejecutados,100,barridos,n_iter de la guía
+D,barridos_estabilizacion,5,barridos,primer barrido sin cambios (incluye verificación)
+D,celdas_libres,360,celdas,grid == 0
+D,obstaculos,40,celdas,grid == 1
+D,tiempo_s,0.031166,s,"medición local, indicativa"
+D,comparacion_dt_pasos,32,pasos,"DT con (2,2) -> (18,18)"
+D,comparacion_bug2_pasos,32,pasos,"Bug2 con (2,2) -> (18,18)"
+D,comparacion_bug2_exito,1,booleano,"Bug2 con (2,2) -> (18,18)"

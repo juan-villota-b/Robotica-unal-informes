@@ -1,0 +1,31 @@
+# === ROS 2 / colcon (artefactos generados, se regeneran con colcon build) ===
+**/build/
+**/install/
+**/log/
+
+# === Python ===
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# === Archivos generados por herramientas ===
+*.gv
+.opencode/
+
+# === Presentaciones: solo se suben .pdf y .pptx ===
+**/Presentación y sustentación/qa/
+
+# === Sistema operativo ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === IDE / editores ===
+.vscode/
+.idea/
+*.swp
+*.swo
