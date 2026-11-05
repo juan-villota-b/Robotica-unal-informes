@@ -29,3 +29,6 @@ desktop.ini
 .idea/
 *.swp
 *.swo
+
+# === Guías de estudio personales (no se publican) ===
+**/Guia_estudio/
