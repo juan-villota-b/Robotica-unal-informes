@@ -1,0 +1,29 @@
+{
+  "name": "slidev-template",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "slidev --open slides.md",
+    "dev:demo": "slidev --open demo.md",
+    "build": "slidev build slides.md",
+    "export": "slidev export slides.md --output slides.pdf",
+    "format": "slidev format slides.md demo.md"
+  },
+  "devDependencies": {
+    "@iconify-json/logos": "^1.2.17",
+    "@iconify-json/lucide": "^1.2.147",
+    "@iconify-json/mdi": "^1.2.3",
+    "@iconify-json/simple-icons": "^1.2.100",
+    "@iconify-json/twemoji": "^1.2.5",
+    "@slidev/cli": "^53.0.0",
+    "@slidev/theme-apple-basic": "^0.25.1",
+    "@slidev/theme-bricks": "^0.25.0",
+    "@slidev/theme-default": "^0.25.0",
+    "@slidev/theme-seriph": "^0.25.0",
+    "@slidev/theme-shibainu": "^0.25.0",
+    "playwright-chromium": "^1.64.1",
+    "prettier": "^3.9.10",
+    "prettier-plugin-slidev": "^1.0.5",
+    "vue": "^3.5.44"
+  }
+}
