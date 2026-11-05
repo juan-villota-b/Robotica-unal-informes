@@ -1,6 +1,4 @@
-node_modules
-dist
-dist-demo
-*.pdf
-.DS_Store
-.slidev
+# Solo se versiona el PDF final de la presentacion.
+*
+!.gitignore
+!slides.pdf

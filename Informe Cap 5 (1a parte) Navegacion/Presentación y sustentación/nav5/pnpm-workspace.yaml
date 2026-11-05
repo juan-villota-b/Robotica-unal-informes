@@ -1,3 +1,0 @@
-allowBuilds:
-  playwright-chromium: true
-  esbuild: true
