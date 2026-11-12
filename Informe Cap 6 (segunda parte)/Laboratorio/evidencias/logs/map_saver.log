@@ -1,0 +1,17 @@
+[INFO] [1794409275.951919357] [map_saver]: 
+	map_saver lifecycle node launched. 
+	Waiting on external lifecycle transitions to activate
+	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [1794409275.952112093] [map_saver]: Creating
+[INFO] [1794409275.952132426] [map_saver]: Configuring
+[INFO] [1794409276.011967334] [map_saver]: Saving map from 'map' topic to '/home/juan-david/Documentos/Semestre_VIII/Robótica/Informes/Informe Cap 6 (segunda parte)/Laboratorio/evidencias/mapa_turtlebot3' file
+[WARN] [1794409276.012058089] [map_saver]: Free threshold unspecified. Setting it to default value: 0.250000
+[WARN] [1794409276.012075051] [map_saver]: Occupied threshold unspecified. Setting it to default value: 0.650000
+[WARN] [1794409277.220178442] [map_io]: Image format unspecified. Setting it to: pgm
+[INFO] [1794409277.220697805] [map_io]: Received a 188 X 167 map @ 0.05 m/pix
+[INFO] [1794409277.240226761] [map_io]: Writing map occupancy data to /home/juan-david/Documentos/Semestre_VIII/Robótica/Informes/Informe Cap 6 (segunda parte)/Laboratorio/evidencias/mapa_turtlebot3.pgm
+[INFO] [1794409277.243922212] [map_io]: Writing map metadata to /home/juan-david/Documentos/Semestre_VIII/Robótica/Informes/Informe Cap 6 (segunda parte)/Laboratorio/evidencias/mapa_turtlebot3.yaml
+[INFO] [1794409277.244282373] [map_io]: Map saved
+[INFO] [1794409277.244319153] [map_saver]: Map saved successfully
+[INFO] [1794409277.247129117] [map_saver]: Destroying
+[WARN] [1794409277.247281250] [rclcpp_lifecycle]: LifecycleNode is not shut down: Node still in state(1) in destructor

@@ -1,0 +1,49 @@
+
+xwininfo: Window id: 0x400 (the root window) (has no name)
+
+  Root window id: 0x400 (the root window) (has no name)
+  Parent window id: 0x0 (none)
+     26 children:
+     0xa00028 "Gazebo Sim": ("mutter-x11-frames" "mutter-x11-frames")  1250x1087+385+13  +385+13
+        2 children:
+        0x1a0001b "Gazebo Sim": ("gz-sim-gui" "Gazebo GUI")  1200x1000+25+62  +410+75
+           1 child:
+           0x1e00002 (has no name): ()  1x1+0+0  +410+75
+        0xa00029 (has no name): ()  1x1+-1+-1  +384+12
+     0x1a0001d "Gazebo GUI": ()  1x1+0+0  +0+0
+     0x1c00001 "gz-sim-gui-client": ("gz-sim-gui-client" "Gz-sim-gui-client")  10x10+10+10  +10+10
+     0x1a00005 "Qt Selection Owner for gz-sim-gui": ()  3x3+0+0  +0+0
+     0xa00004 "Gazebo Sim": ("mutter-x11-frames" "mutter-x11-frames")  1250x1087+335+13  +335+13
+        2 children:
+        0x100001b "Gazebo Sim": ("gz-sim-gui" "Gazebo GUI")  1200x1000+25+62  +360+75
+           1 child:
+           0x1800002 (has no name): ()  1x1+0+0  +360+75
+        0xa00005 (has no name): ()  1x1+-1+-1  +334+12
+     0x1400001 (has no name): ()  1x1+0+0  +0+0
+        1 child:
+        0x1600002 (has no name): ()  1x1+0+0  +0+0
+     0xa00009 (has no name): ()  1x1+-1+-1  +-1+-1
+     0x100001d "Gazebo GUI": ()  1x1+0+0  +0+0
+     0x1200001 "gz-sim-gui-client": ("gz-sim-gui-client" "Gz-sim-gui-client")  10x10+10+10  +10+10
+     0x1000005 "Qt Selection Owner for gz-sim-gui": ()  3x3+0+0  +0+0
+     0xe00005 "Qt Selection Owner for MathWorksCrashReporter": ()  3x3+0+0  +0+0
+     0xc00001 (has no name): ()  1x1+0+0  +0+0
+     0x800003 "ibus-xim": ()  1x1+0+0  +0+0
+        1 child:
+        0x800004 (has no name): ()  1x1+-1+-1  +-1+-1
+     0x800001 "ibus-x11": ("ibus-x11" "")  10x10+10+10  +10+10
+     0xa00002 "mutter-x11-frames": ("mutter-x11-frames" "mutter-x11-frames")  1x1+0+0  +0+0
+        1 child:
+        0xa00003 (has no name): ()  1x1+-1+-1  +-1+-1
+     0x400009 (has no name): ()  1x1+0+0  +0+0
+     0x400008 (has no name): ()  1x1+-1+-1  +-1+-1
+     0x400007 (has no name): ()  1x1+-1+-1  +-1+-1
+     0x400006 (has no name): ()  1x1+-100+-100  +-100+-100
+     0x400005 (has no name): ()  1x1+-100+-100  +-100+-100
+     0x400004 (has no name): ()  1x1+-1+-1  +-1+-1
+     0x400003 (has no name): ()  1x1+-100+-100  +-100+-100
+     0x400002 (has no name): ()  1x1+-100+-100  +-100+-100
+     0x400001 "GNOME Shell": ()  1x1+-100+-100  +-100+-100
+     0x200001 (has no name): ()  10x10+0+0  +0+0
+     0x40000a "mutter guard window": ()  1920x1080+0+0  +0+0
+

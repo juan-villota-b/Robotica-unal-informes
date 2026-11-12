@@ -1,0 +1,46 @@
+[INFO] [launch]: All log files can be found below /home/juan-david/.ros/log/2026-11-11-09-59-00-678460-Vivobook-23805
+[INFO] [launch]: Default logging verbosity is set to INFO
+urdf_file_name : turtlebot3_burger.urdf
+urdf_file_name : turtlebot3_burger.urdf
+[INFO] [gazebo-1]: process started with pid [23821]
+[INFO] [gazebo-2]: process started with pid [23822]
+[INFO] [create-3]: process started with pid [23823]
+[INFO] [parameter_bridge-4]: process started with pid [23826]
+[INFO] [robot_state_publisher-5]: process started with pid [23827]
+[robot_state_publisher-5] [INFO] [1794409141.121814140] [robot_state_publisher]: Robot initialized
+[create-3] [INFO] [1794409141.131171503] [ros_gz_sim]: Requesting list of world names.
+[create-3] [INFO] [1794409141.333673261] [ros_gz_sim]: Entity creation successful.
+[gazebo-2] (2026-11-11 09:59:01.355) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/Main.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:01.472) [warning] [Application.cc:923] [GUI] [QT] qrc:qml/Main.qml:163:11: QML ToolBar (parent or ancestor of Material): Binding loop detected for property "foreground":
+[gazebo-2] qrc:qml/Main.qml:165:5
+[INFO] [create-3]: process has finished cleanly [pid 23823]
+[gazebo-2] (2026-11-11 09:59:01.824) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:01.981) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.082) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[parameter_bridge-4] [INFO] [1794409142.149993681] [ros_gz_bridge]: Creating GZ->ROS Bridge: [clock (gz.msgs.Clock) -> clock (rosgraph_msgs/msg/Clock)] (Lazy 0)
+[parameter_bridge-4] [INFO] [1794409142.151809871] [ros_gz_bridge]: Creating GZ->ROS Bridge: [joint_states (gz.msgs.Model) -> joint_states (sensor_msgs/msg/JointState)] (Lazy 0)
+[parameter_bridge-4] [INFO] [1794409142.165320022] [ros_gz_bridge]: Creating GZ->ROS Bridge: [odom (gz.msgs.Odometry) -> odom (nav_msgs/msg/Odometry)] (Lazy 0)
+[parameter_bridge-4] [INFO] [1794409142.172108801] [ros_gz_bridge]: Creating GZ->ROS Bridge: [tf (gz.msgs.Pose_V) -> tf (tf2_msgs/msg/TFMessage)] (Lazy 0)
+[parameter_bridge-4] [INFO] [1794409142.178807794] [ros_gz_bridge]: Creating ROS->GZ Bridge: [cmd_vel (geometry_msgs/msg/TwistStamped) -> cmd_vel (gz.msgs.Twist)] (Lazy 0)
+[parameter_bridge-4] [INFO] [1794409142.184058514] [ros_gz_bridge]: Creating GZ->ROS Bridge: [imu (gz.msgs.IMU) -> imu (sensor_msgs/msg/Imu)] (Lazy 0)
+[parameter_bridge-4] [INFO] [1794409142.185125532] [ros_gz_bridge]: Creating GZ->ROS Bridge: [scan (gz.msgs.LaserScan) -> scan (sensor_msgs/msg/LaserScan)] (Lazy 0)
+[gazebo-2] (2026-11-11 09:59:02.204) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.245) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.283) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.324) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.370) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.416) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.465) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.521) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.574) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.623) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.679) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.724) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.766) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.834) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] (2026-11-11 09:59:02.890) [warning] [Application.cc:923] [GUI] [QT] QQmlComponent: attempted to load via a relative URL 'qrc:qml/GzCard.qml' in resource file system. This is not fully supported and may not work
+[gazebo-2] [1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="turtlebot3_burger"]/link[@name="base_scan"]/sensor[@name="hls_lfcd_lds"]/gz_frame_id:<data-string>:L163]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[gazebo-1] (2026-11-11 09:59:03.231) [error] [SimulationRunner.cc:274] Another world of the same name is running
+[gazebo-1] (2026-11-11 09:59:03.235) [warning] [SimulationRunner.cc:855] Found additional publishers on /stats, using namespaced stats topic only
+[gazebo-1] (2026-11-11 09:59:03.235) [warning] [SimulationRunner.cc:889] Found additional publishers on /clock, using namespaced clock topic only
+[parameter_bridge-4] [INFO] [1794409163.785493903] [ros_gz_bridge]: Passing message from ROS geometry_msgs/msg/TwistStamped to Gazebo gz.msgs.Twist (showing msg only once per type)

@@ -10,6 +10,7 @@ Estructura: **una carpeta por capítulo/informe**, y dentro `Guia/` (guía, slid
 | `Informe Cap 4 (2a parte) - Cinemática de robots móviles` | copia de la guía CAP4 + slides | `Laboratorio/Lab5` (act 3–5 en TurtleBot3 / Gazebo) + `INFORME_LAB5.md`, `PRESENTACION_LAB5.*` |
 | `Informe Cap 5 (1a parte) Navegacion` | `Guia/GUÍA DE LABORATORIO CAP5.pdf` (reactivo, Bug2, A*, mapas de ocupación, ROS2 Nav2) | `Laboratorio/` (partes A–D en Python) + `Informe/INFORME_CAP5.md` (PDF) |
 | `Informe Cap 6 (primera parte)` | `Guia/GUÍA DE LABORATORIO CAP6.pdf` (odometría, EKF, landmarks, SLAM, Cartographer ROS2) | `Laboratorio/simulaciones` (partes 1–4) + `Laboratorio/ros2_ws` (paquete `localization_lab`) |
+| `Informe Cap 6 (segunda parte)` | `Guia/PARTE_8 - SLAM con Cartographer en ROS2.md` (§8 de la guía CAP6, pp. 10–21) | `Laboratorio/ros2_ws` (paquete `localization_lab`, SLAM Toolbox) + `Laboratorio/evidencias` (mapa + capturas) + `Informe/INFORME_CAP6_P2.md` |
 
 Extras:
 - `Informe Cap2/Presentación y sustentación/` → presentación del Cap 2 (8 diapositivas). La sustentación y las instrucciones de las diapositivas quedaron dentro de `Cuaterniones_ROS2/`.

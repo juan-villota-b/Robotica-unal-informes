@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "slidev": {
+      "type": "local",
+      "command": ["pnpm", "exec", "slidev", "mcp", "slides.md"],
+      "cwd": ".",
+      "enabled": true
+    }
+  }
+}
